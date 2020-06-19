@@ -1,0 +1,42 @@
+// This #include statement was automatically added by the Particle IDE.
+#include <HC_SR04.h>
+
+
+int cm = 0;
+int trigPin = D4;
+int echoPin = D5;
+int LED = D7;
+int buzzerPin = D6;
+bool previousValue = false;
+
+
+HC_SR04 rangeFinder = HC_SR04(trigPin, echoPin);
+
+void setup(){
+
+    pinMode(LED, OUTPUT);
+    pinMode(buzzerPin, OUTPUT);
+
+}
+
+void loop() {
+
+    cm = rangeFinder.getDistanceCM();
+
+    if ((cm<20 && cm>0) and (previousValue == false)){
+
+        digitalWrite(LED, HIGH);
+        tone(buzzerPin, 2000, 3000);
+        Particle.publish( "Face range", "Too close");
+        previousValue = true;
+
+    } else if (previousValue == true) {
+        digitalWrite(LED, LOW);
+        tone(buzzerPin, 0, 0);
+        Particle.publish( "Face range", "No issues");
+        previousValue = false;
+
+}
+
+delay(3000);
+}
